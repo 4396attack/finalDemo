@@ -1,0 +1,16 @@
+#标明引入那个配置文件
+spring:
+  profiles:
+    active: dev
+
+
+
+#自定义属性
+
+oss:
+  accessKeyId: LTAIqnevufzufutK
+  accessKeySecret: 6xMPcRlAArDdYQdB3TbCzr0rpVGABR
+  bucketFace: ai-face-yyj
+  bucketDetail: ai-face-detail-yyj
+  endPoint: http://oss-cn-hangzhou.aliyuncs.com
+

@@ -1,0 +1,8 @@
+#标明引入那个配置文件
+spring:
+  profiles:
+    active: dev
+
+
+
+
