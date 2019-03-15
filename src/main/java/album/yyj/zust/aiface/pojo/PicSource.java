@@ -5,24 +5,24 @@ import java.util.Date;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+/**
+ * 这个类用于记录用户用来检索的人脸图像
+ */
 @Entity
-@Table(name="photo")
-public class Photo {
+@Table(name = "pic_source")
+public class PicSource {
     private Integer id;
-
     private Integer userId;
-
     private Date updateTime;
-
-    private Integer num;
-
     private Integer deleted;
 
-    private String faceRect;
-
-    @Override
-    public String toString() {
-        return "[Photo : ] id = " +this.id + "userId=" + this.userId+" updateTime= " + updateTime + " num= " +num+" faceRect= "+faceRect+" deleted= "+deleted;
+    public PicSource(){
+        super();
+    }
+    public PicSource(Integer userId) {
+        this.userId = userId;
+        this.updateTime = new Date();
+        this.deleted = 1;
     }
 
     @Id
@@ -35,7 +35,7 @@ public class Photo {
     public void setId(Integer id) {
         this.id = id;
     }
-@Column(name = "user_id")
+    @Column(name = "user_id")
     public Integer getUserId() {
         return userId;
     }
@@ -43,7 +43,7 @@ public class Photo {
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
-@Column(name = "update_time")
+    @Column(name = "update_time")
     public Date getUpdateTime() {
         return updateTime;
     }
@@ -51,15 +51,7 @@ public class Photo {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
-@Column(name = "num")
-    public Integer getNum() {
-        return num;
-    }
-
-    public void setNum(Integer num) {
-        this.num = num;
-    }
-@Column(name = "deleted")
+    @Column(name = "deleted")
     public Integer getDeleted() {
         return deleted;
     }
@@ -67,13 +59,4 @@ public class Photo {
     public void setDeleted(Integer deleted) {
         this.deleted = deleted;
     }
-@Column(name = "face_rect")
-    public String getFaceRect() {
-        return faceRect;
-    }
-
-    public void setFaceRect(String faceRect) {
-        this.faceRect = faceRect;
-    }
-
 }

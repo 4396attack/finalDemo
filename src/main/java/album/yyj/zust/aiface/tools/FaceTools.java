@@ -275,6 +275,30 @@ public class FaceTools {
         }
         return res;
     }
+
+    /**
+     * 发送人脸对别请求 （图片1中的最大人脸 与 图片2 中的最大人脸）
+     * @param
+     * @throws Exception
+     */
+    public static String sendFaceCheckByContent(String accessId,String accessSecret,File source,File photoFace){
+        String res = "";
+        String encodeStrSour = encodeImageToBase64(source);
+        String encodeStrFace = encodeImageToBase64(photoFace);
+        if(encodeStrSour != null && encodeStrFace != null){
+            String dataSour = encodeStrSour.replaceAll("[\\s*\t\n\r]", "");
+            String dataFace = encodeStrFace.replaceAll("[\\s*\t\n\r]", "");
+            dataSour = "'" + dataSour + "'";
+            dataFace = "'" + dataFace + "'";
+            String body = "{\"type\": "+1+", \"content_1\": "+dataSour+" ,\"content_2\" : "+dataFace+"}";
+            try {
+                res = sendPost(URL_VERI, body, accessId, accessSecret);
+            } catch (Exception e) {
+
+            }
+        }
+        return res;
+    }
     public static void main(String[] args) throws Exception {
         // 发送POST请求示例
         System.out.println("*********************");
@@ -286,9 +310,13 @@ public class FaceTools {
         if(encodeStr == null){
             System.out.println("over");
         }
-        System.out.println(encodeStr);
-        String body = "{\"type\": " + 0 + " , \"image_url\": \"http://ai-face-yyj.oss-cn-hangzhou.aliyuncs.com/user1/photo6.jpg?Expires=1552117813&OSSAccessKeyId=LTAIqnevufzufutK&Signature=uoc3%2Bryjvh6rsgWhFJ11dz2xmL0%3D \"}";
-        System.out.println("response body:" + sendPost(url, body, ak_id, ak_secret));
+//        System.out.println(encodeStr);
+        File sour = new File("E:\\finalDemo\\facetest\\2.jpg");
+        File face = new File("E:\\finalDemo\\facetest\\photo6.jpg");
+        String body = sendFaceCheckByContent(ak_id,ak_secret,sour,face);
+//        String body = "{\"type\": " + 0 + " , \"image_url\": \"http://ai-face-yyj.oss-cn-hangzhou.aliyuncs.com/user1/photo6.jpg?Expires=1552117813&OSSAccessKeyId=LTAIqnevufzufutK&Signature=uoc3%2Bryjvh6rsgWhFJ11dz2xmL0%3D \"}";
+//        System.out.println("response body:" + sendPost(url, body, ak_id, ak_secret));
+        System.out.println(body);
 //        String data = encodeStr.replaceAll("[\\s*\t\n\r]", "");
 //        data = "'" + data + "'";
 //        String body = "{\"type\": "+1+", \"content\": "+data+"}";

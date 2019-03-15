@@ -6,24 +6,15 @@ import java.util.Date;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
-@Table(name="photo")
-public class Photo {
+@Table(name = "find_records")
+public class FindRecords {
     private Integer id;
-
     private Integer userId;
-
+    private Integer photoId;
+    private Integer sourceId;
     private Date updateTime;
-
-    private Integer num;
-
+    private Double confidence;
     private Integer deleted;
-
-    private String faceRect;
-
-    @Override
-    public String toString() {
-        return "[Photo : ] id = " +this.id + "userId=" + this.userId+" updateTime= " + updateTime + " num= " +num+" faceRect= "+faceRect+" deleted= "+deleted;
-    }
 
     @Id
     @GeneratedValue(strategy=IDENTITY)
@@ -35,7 +26,7 @@ public class Photo {
     public void setId(Integer id) {
         this.id = id;
     }
-@Column(name = "user_id")
+    @Column(name = "user_id")
     public Integer getUserId() {
         return userId;
     }
@@ -43,7 +34,23 @@ public class Photo {
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
-@Column(name = "update_time")
+    @Column(name = "photo_id")
+    public Integer getPhotoId() {
+        return photoId;
+    }
+
+    public void setPhotoId(Integer photoId) {
+        this.photoId = photoId;
+    }
+    @Column(name = "source_id")
+    public Integer getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(Integer sourceId) {
+        this.sourceId = sourceId;
+    }
+    @Column(name = "update_time")
     public Date getUpdateTime() {
         return updateTime;
     }
@@ -51,15 +58,7 @@ public class Photo {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
-@Column(name = "num")
-    public Integer getNum() {
-        return num;
-    }
-
-    public void setNum(Integer num) {
-        this.num = num;
-    }
-@Column(name = "deleted")
+    @Column(name = "deleted")
     public Integer getDeleted() {
         return deleted;
     }
@@ -67,13 +66,12 @@ public class Photo {
     public void setDeleted(Integer deleted) {
         this.deleted = deleted;
     }
-@Column(name = "face_rect")
-    public String getFaceRect() {
-        return faceRect;
+    @Column(name = "confidence")
+    public Double getConfidence() {
+        return confidence;
     }
 
-    public void setFaceRect(String faceRect) {
-        this.faceRect = faceRect;
+    public void setConfidence(Double confidence) {
+        this.confidence = confidence;
     }
-
 }

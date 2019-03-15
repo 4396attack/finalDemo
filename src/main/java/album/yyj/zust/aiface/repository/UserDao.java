@@ -10,4 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface UserDao extends JpaRepository<User,Integer>{
     @Query("select user from User user where user.phone=:phone and user.deleted = 0")
     public User findUserByPhone(@Param("phone") String phone);
+
+    @Query("select user from User user where user.id =:userId and user.deleted = 0")
+    public User findUndeletedUserById(@Param("userId") Integer userId);
 }

@@ -30,4 +30,17 @@ public class StringTools {
         }
         return info;
     }
+
+    /**
+     * 校验参数合理性
+     * @param para
+     * @return
+     */
+    public static boolean checkPram(Object para){
+        boolean flag = false;
+        if(para != null){
+            flag = true;
+        }
+        return flag;
+    }
 }

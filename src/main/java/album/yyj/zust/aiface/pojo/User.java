@@ -57,7 +57,7 @@ public class User {
     public void setDeleted(Integer deleted) {
         this.deleted = deleted;
     }
-    
+
     @Id
     @GeneratedValue(strategy=IDENTITY)
     @Column(name="id", unique=true, nullable=false)

@@ -1,15 +1,27 @@
 package album.yyj.zust.aiface;
 
+import album.yyj.zust.aiface.pojo.Photo;
 import album.yyj.zust.aiface.properties.Ossproperties;
+import album.yyj.zust.aiface.repository.PhotoDao;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.stereotype.Component;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+@SpringBootTest
+@RunWith(SpringRunner.class)
 public class test {
+    Logger logger = LoggerFactory.getLogger(test.class);
+    @Autowired
+    private PhotoDao photoDao;
     @Test
-
     public void name() {
 //        Ossproperties ossproperties = new Ossproperties();
 //        System.out.println(ossproperties.toString());
@@ -40,5 +52,13 @@ public class test {
 //            System.out.println(s);
 //        }
 //        System.out.println(ract2.substring(1,ract2.length()-1).trim().equals(""));
+    }
+    @Test
+    public void searchAll(){
+        List<Photo> list = photoDao.findUndeletedsPhotosByUserId(1);
+        for (Photo p : list){
+            logger.info(p.toString());
+        }
+
     }
 }

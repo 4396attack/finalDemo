@@ -5,4 +5,8 @@ public class OSSPathTools {
     public static String prePhotoPath(Integer userId,Integer photoId){
         return "user" + userId + "/photo" + photoId + ".jpg";
     }
+
+    public static String getSourcePath(Integer userId, Integer id) {
+        return "source/User" + userId + "/" + id + ".jpg";
+    }
 }
