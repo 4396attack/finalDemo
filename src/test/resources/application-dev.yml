@@ -20,10 +20,12 @@ spring:
   logging:
     level: warn
     file: ./boot.log
-    #消息队列相关信息
-    rabbitMQ:
-      host: 127.0.0.1
-      port: 5672
-      username: 
+  #消息队列相关信息
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+    publisher-confirms: true #  消息发送到交换机确认机制,是否确认回调
 mybatis:
   mapper-locations: classpath:mapper/*.xml

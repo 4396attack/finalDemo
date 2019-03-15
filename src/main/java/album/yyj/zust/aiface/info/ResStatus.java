@@ -17,6 +17,8 @@ public class ResStatus {
         MsgInfo.put(6,"数据库插入失败");
         MsgInfo.put(7,"数据库更新失败");
         MsgInfo.put(8,"数据库删除失败");
+        MsgInfo.put(10,"未检测出人脸信息");
+        MsgInfo.put(20,"rabbitMQ发送消息失败");
     }
     public static String getInfo(Integer errorCode){
         return MsgInfo.get(errorCode);

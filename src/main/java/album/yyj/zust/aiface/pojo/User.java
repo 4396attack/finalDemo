@@ -57,15 +57,7 @@ public class User {
     public void setDeleted(Integer deleted) {
         this.deleted = deleted;
     }
-
-    @Override
-    public String toString(){
-        return "Book{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", birthDay='" + birthday + '\'' +
-                '}';
-    }
+    
     @Id
     @GeneratedValue(strategy=IDENTITY)
     @Column(name="id", unique=true, nullable=false)

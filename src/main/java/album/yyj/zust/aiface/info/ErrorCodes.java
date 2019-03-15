@@ -14,4 +14,8 @@ public class ErrorCodes {
     public final static Integer DB_INSERT_ERR = 6;//数据库插入失败
     public final static Integer DB_UPDATE_ERR = 7;//数据库更新失败
     public final static Integer DB_DELETED_ERR = 8;//数据库删除失败
+
+    public final static Integer NO_FACE_INFO = 10;//未检测出人脸信息
+
+    public final static Integer RABBIT_MSG_SEND_FAIL = 20;//发送消息失败
 }

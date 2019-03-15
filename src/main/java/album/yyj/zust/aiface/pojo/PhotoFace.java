@@ -12,9 +12,24 @@ public class PhotoFace {
     private Integer photoId;
     private Integer userId;
     private Date updateTime;
-    private Double width;
-    private Double height;
+    private String width;
+    private String height;
+    private String pointX;
+    private String pointY;
+    private Integer hasCut;//是否已裁剪
     private Integer deleted;
+
+    public PhotoFace() {
+        super();
+    }
+
+    public PhotoFace(Integer photoId, Integer userId) {
+        this.photoId = photoId;
+        this.userId = userId;
+        this.updateTime = new Date();
+        this.deleted = 1;
+        this.setHasCut(0);
+    }
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -51,19 +66,19 @@ public class PhotoFace {
         this.updateTime = updateTime;
     }
     @Column(name = "width")
-    public Double getWidth() {
+    public String getWidth() {
         return width;
     }
 
-    public void setWidth(Double width) {
+    public void setWidth(String width) {
         this.width = width;
     }
     @Column(name = "height")
-    public Double getHeight() {
+    public String getHeight() {
         return height;
     }
 
-    public void setHeight(Double height) {
+    public void setHeight(String height) {
         this.height = height;
     }
     @Column(name = "deleted")
@@ -73,5 +88,30 @@ public class PhotoFace {
 
     public void setDeleted(Integer deleted) {
         this.deleted = deleted;
+    }
+    @Column(name = "point_x")
+    public String getPointX() {
+        return pointX;
+    }
+
+    public void setPointX(String pointX) {
+        this.pointX = pointX;
+    }
+    @Column(name = "point_y")
+    public String getPointY() {
+        return pointY;
+    }
+
+    public void setPointY(String pointY) {
+        this.pointY = pointY;
+    }
+
+    @Column(name = "has_cut")
+    public Integer getHasCut() {
+        return hasCut;
+    }
+
+    public void setHasCut(Integer hasCut) {
+        this.hasCut = hasCut;
     }
 }
