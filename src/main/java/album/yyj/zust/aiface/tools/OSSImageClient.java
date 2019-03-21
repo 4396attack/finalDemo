@@ -26,11 +26,14 @@ public class OSSImageClient {
         this.ossClient = new OSSClient(endPoint,accessKeyId,accessKeySecret);
     }
 
-    public void upload(String bucket, String objName, String fileName){
+    public boolean upload(String bucket, String objName, String fileName){
+        boolean flag = false;
         File file = new File(fileName);
-        if(file != null){
+        if(file.exists()){
             ossClient.putObject(bucket,objName,file);
+            flag = true;
         }
+        return flag;
     }
     public boolean exitObj(String bucket, String objName){
         return ossClient.doesObjectExist(bucket,objName);
@@ -46,6 +49,9 @@ public class OSSImageClient {
         File file = new File("temp");
         ossClient.getObject(new GetObjectRequest(bucket,objName),file);
         return file;
+    }
+    public void downloadToPath(String bucket,String objName,String dest){
+        ossClient.getObject(new GetObjectRequest(bucket,objName),new File(dest));
     }
     public void close(){
         ossClient.shutdown();

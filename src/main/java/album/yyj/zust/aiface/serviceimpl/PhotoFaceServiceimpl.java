@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,6 +42,26 @@ public class PhotoFaceServiceimpl implements PhotoFaceService {
         if(photo == null){
             return ErrorCodes.NO_SUCH_PHOTO;
         }
+        List<PhotoFace> faces = photoFaceDao.findAllFacesByPhotoId(photoId);
+        if(faces.size() > 0){
+            logger.info("此前已经插入过，无需再次添加");
+            StringBuilder idStr = new StringBuilder();
+            for(PhotoFace pf : faces){
+                idStr.append(pf.getId());
+            }
+            String str = idStr.toString();
+            str = str.substring(0,str.length()-1);//将最后一个，去掉 str就是本照片中含有的人脸记录id
+            String message = "{\"photoId\" : \""+ photo.getId()+"\" , \"userId\" : \""+photo.getUserId()+"\" , \"faceIds\" : \""+str+"\"}";
+            String uuid = UUID.randomUUID().toString();
+            try {
+                firstSender.send(uuid, message);
+                logger.info("成功发送消息到消息队列中，内容为: " + message );
+            }catch (Exception e){
+                logger.info("尝试发送消息失败，内容为 ： " + message + " ; 错误原因 ：" +e);
+                error = ErrorCodes.RABBIT_MSG_SEND_FAIL;
+            }
+            return error;
+        }
         String ract = photo.getFaceRect();
         if(ract != null){//检测出人脸信息
             logger.info("图片（id = "+photo.getId()+"）中人脸坐标信息为： "  + ract);
@@ -65,7 +86,7 @@ public class PhotoFaceServiceimpl implements PhotoFaceService {
                 }
                 String str = ids.toString();
                 str = str.substring(0,str.length()-1);//将最后一个，去掉 str就是本照片中含有的人脸记录id
-                String message = "{\"photoId\" : \""+ photo.getId()+"\" , \"faceIds\" : \""+str+"\"}";
+                String message = "{\"photoId\" : \""+ photo.getId()+"\" , \"userId\" : \""+photo.getUserId()+"\" , \"faceIds\" : \""+str+"\"}";
                 String uuid = UUID.randomUUID().toString();
                 try {
                     firstSender.send(uuid, message);
@@ -78,5 +99,24 @@ public class PhotoFaceServiceimpl implements PhotoFaceService {
         }
 
         return error;
+    }
+
+    @Override
+    public List<PhotoFace> findAllFaceByPhotoIdAndFaceIds(String photoId, String[] ids) {
+        List<PhotoFace> result = new ArrayList<>();
+        Integer pId = Integer.valueOf(photoId);
+        for(String s : ids){
+            Integer id = Integer.valueOf(s);
+            PhotoFace pf = photoFaceDao.findUncutPhotoFace(id,pId);
+            if (pf != null){
+                result.add(pf);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public PhotoFace updateInfo(PhotoFace photoFace) {
+        return photoFaceDao.save(photoFace);
     }
 }
