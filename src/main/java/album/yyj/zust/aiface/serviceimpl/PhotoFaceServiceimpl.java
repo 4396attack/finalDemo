@@ -48,6 +48,7 @@ public class PhotoFaceServiceimpl implements PhotoFaceService {
             StringBuilder idStr = new StringBuilder();
             for(PhotoFace pf : faces){
                 idStr.append(pf.getId());
+                idStr.append(",");
             }
             String str = idStr.toString();
             str = str.substring(0,str.length()-1);//将最后一个，去掉 str就是本照片中含有的人脸记录id

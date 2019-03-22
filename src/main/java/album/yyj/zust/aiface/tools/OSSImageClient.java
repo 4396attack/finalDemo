@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.net.URL;
 import java.util.Date;
+import java.util.UUID;
 
 public class OSSImageClient {
     private OSSClient ossClient;
@@ -46,9 +47,10 @@ public class OSSImageClient {
         return url.toString();
     }
     public File downloadFile(String bucket,String objName){
-        File file = new File("temp");
-        ossClient.getObject(new GetObjectRequest(bucket,objName),file);
-        return file;
+        String uuid = UUID.randomUUID().toString() + ".jpg";
+        String path = System.getProperty("user.dir") + "\\facetest\\" + uuid;
+        ossClient.getObject(new GetObjectRequest(bucket,objName),new File(path));
+        return new File(path);
     }
     public void downloadToPath(String bucket,String objName,String dest){
         ossClient.getObject(new GetObjectRequest(bucket,objName),new File(dest));

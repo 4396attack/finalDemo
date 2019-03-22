@@ -13,8 +13,24 @@ public class FindRecords {
     private Integer photoId;
     private Integer sourceId;
     private Date updateTime;
-    private Double confidence;
+    private Float confidence;
     private Integer deleted;
+    private Integer faceId;
+
+    public FindRecords(){
+        super();
+    }
+
+    public FindRecords(Integer userId, Integer photoId, Integer sourceId, Float confidence,Integer faceId) {
+        this.userId = userId;
+        this.photoId = photoId;
+        this.sourceId = sourceId;
+        this.confidence = confidence;
+        this.updateTime = new Date();
+        this.deleted = 0;
+        this.faceId = faceId;
+
+    }
 
     @Id
     @GeneratedValue(strategy=IDENTITY)
@@ -67,11 +83,20 @@ public class FindRecords {
         this.deleted = deleted;
     }
     @Column(name = "confidence")
-    public Double getConfidence() {
+    public Float getConfidence() {
         return confidence;
     }
 
-    public void setConfidence(Double confidence) {
+    public void setConfidence(Float confidence) {
         this.confidence = confidence;
+    }
+
+    @Column(name = "face_id")
+    public Integer getFaceId() {
+        return faceId;
+    }
+
+    public void setFaceId(Integer faceId) {
+        this.faceId = faceId;
     }
 }

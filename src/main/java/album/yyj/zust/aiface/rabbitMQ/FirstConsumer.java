@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -69,7 +70,9 @@ public class FirstConsumer {
         Integer height = Integer.valueOf(photoFace.getHeight());
         File src = new File(srcImg);
         if(!src.exists()){//本地不存在原图，先去OSS上下载
-            client.downloadToPath(OSSPathTools.ORIGIN_BUCKET,OSSPathTools.prePhotoPath(photoFace.getUserId(),photoFace.getPhotoId()),srcImg);
+            if(client.exitObj(OSSPathTools.ORIGIN_BUCKET,OSSPathTools.prePhotoPath(photoFace.getUserId(),photoFace.getPhotoId()))){
+                client.downloadToPath(OSSPathTools.ORIGIN_BUCKET,OSSPathTools.prePhotoPath(photoFace.getUserId(),photoFace.getPhotoId()),srcImg);
+            }
         }
         boolean flag = ImageUtil.cutImage(srcImg,dest,x,y,width,height);
         if(flag){//裁剪成功上传到oss，并删除本地缓存文件
@@ -78,13 +81,23 @@ public class FirstConsumer {
                 logger.info("文件上传成功，文件名：" + dest);
                 photoFace.setDeleted(0);
                 photoFace.setHasCut(1);
+                photoFace.setUpdateTime(new Date());
                 PhotoFace save = photoFaceService.updateInfo(photoFace);
                 if(new Integer(1).equals(save.getHasCut())){//
                     logger.info("数据库更新成功！");
                 }else {
                     logger.info("数据库更新失败，faceId = " + photoFace.getId());
                 }
-                new File(dest).delete();
+                //删除本地缓存图片
+                File tempFile = new File(dest);
+                if(tempFile.exists()){
+                    if(tempFile.delete()){
+                        logger.info("删除缓存图片成功！");
+                    }else {
+                        logger.info("删除缓存图片失败，文件地址 ：" + dest);
+                    }
+
+                }
             }else {
                 logger.info("文件上传失败，请检查图片是否存在，文件名：" + dest);
             }

@@ -14,4 +14,12 @@ public interface PhotoFaceDao extends JpaRepository<PhotoFace,Integer> {
     @Query("select photoFace from PhotoFace photoFace where photoFace.photoId =:photoId")
     public List<PhotoFace> findAllFacesByPhotoId(@Param("photoId")Integer photoId);
 
+    /**
+     * 筛选已经截取出来的人脸记录 根据photoId
+     * @param photoId 所属图片Id
+     * @return 所有记录
+     */
+    @Query("select photoFace from PhotoFace photoFace where photoFace.photoId=:photoId and deleted = 0 and photoFace.hasCut = 1")
+    public List<PhotoFace> findFacesBelongPhoto(@Param("photoId")Integer photoId);
+
 }

@@ -295,6 +295,13 @@ public class FaceTools {
                 res = sendPost(URL_VERI, body, accessId, accessSecret);
             } catch (Exception e) {
 
+            }finally {
+                if(source.exists()){
+                    source.delete();
+                }
+                if(photoFace.exists()){
+                    photoFace.delete();
+                }
             }
         }
         return res;
@@ -312,7 +319,7 @@ public class FaceTools {
         }
 //        System.out.println(encodeStr);
         File sour = new File("E:\\finalDemo\\facetest\\2.jpg");
-        File face = new File("E:\\finalDemo\\facetest\\photo6.jpg");
+        File face = new File("E:\\finalDemo\\facetest\\6.jpg");
         String body = sendFaceCheckByContent(ak_id,ak_secret,sour,face);
 //        String body = "{\"type\": " + 0 + " , \"image_url\": \"http://ai-face-yyj.oss-cn-hangzhou.aliyuncs.com/user1/photo6.jpg?Expires=1552117813&OSSAccessKeyId=LTAIqnevufzufutK&Signature=uoc3%2Bryjvh6rsgWhFJ11dz2xmL0%3D \"}";
 //        System.out.println("response body:" + sendPost(url, body, ak_id, ak_secret));

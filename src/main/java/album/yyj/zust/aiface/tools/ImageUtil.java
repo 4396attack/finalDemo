@@ -89,7 +89,7 @@ public class ImageUtil {
 
     public static boolean cutImage(File srcImg,String destImgPath,Rectangle rect){
         File destImg = new File(destImgPath);
-        if(destImg.exists()){
+        if(srcImg.exists()){
             String p =destImg.getPath();
             try{
                 if(!destImg.isDirectory()){
@@ -98,13 +98,13 @@ public class ImageUtil {
                 if (!p.endsWith(File.separator)) {
                     p = p + File.separator;
                 }
-                return cutImg(srcImg,new FileOutputStream(p + DEFAULT_CUT + srcImg.getName()),rect);
+                return cutImg(srcImg,new FileOutputStream(destImgPath),rect);
             }catch (FileNotFoundException e){
-                System.out.println(3);
+                System.out.println("裁剪出错！");
                 return false;
             }
         }else {
-            System.out.println(2);
+            System.out.println("原图不存在！");
             return false;
         }
     }
@@ -118,8 +118,11 @@ public class ImageUtil {
     }
 
     public static void main(String[] args){
-//        System.out.println(cutImage("E:\\finalDemo\\facetest\\photo6.jpg","E:\\finalDemo\\facetest\\cut",123,95,253,343));
-        System.out.println(TEMP_PATH + "1.jpg");
+//        boolean flag = cutImage("E:\\finalDemo\\facetest\\temp\\1_6.jpg","E:\\finalDemo\\facetest\\cut\\1_1.jpg",123,95,253,343);
+//        System.out.println(flag);
+        File f = new File("E:\\finalDemo\\facetest\\cut\\1_1.jpg");
+        System.out.println(f.delete());
+
     }
 
 }

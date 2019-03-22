@@ -31,6 +31,13 @@ public class OSSPathTools {
         return ImageUtil.CUT_PATH + userId + "_" + id + ".jpg";
     }
 
+    /**
+     * 人脸图的OSS路径
+     * @param userId
+     * @param photoId
+     * @param id
+     * @return
+     */
     public static String getFaceDetailOSSPath(Integer userId,Integer photoId,Integer id){
         return "User" + userId + "/photo" + photoId  + "/" + id +".jpg";
     }
