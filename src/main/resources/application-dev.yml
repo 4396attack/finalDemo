@@ -3,6 +3,7 @@ server:
   port: 8080
   servlet:
     context-path: /boot
+  address: 0.0.0.0
 
 spring:
   thymeleaf:
@@ -10,9 +11,9 @@ spring:
   #配置项目的数据库链接信息
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql:///aiface?userUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://rm-bp1px87vnq1l2f2q7do.mysql.rds.aliyuncs.com:3306/aiface?serverTimezone=GMT%2B8
     username: root
-    password: 123456
+    password: Yyj+1223
   jpa:
     hibernate:
       ddl-auto: update
@@ -36,3 +37,10 @@ oss:
   bucketFace: ai-face-yyj
   bucketDetail: ai-face-detail-yyj
   endPoint: http://oss-cn-hangzhou.aliyuncs.com
+  roleArn: acs:ram::1680352034668073:role/aliyunosstokengeneratorrole
+  policyFile: policy/bucket_read_write_policy.txt
+  tokenExpireTime: 30
+  STS_API_VERSION: 2015-04-01
+  STS_ENDPOINT: cn-hangzhou
+  STS_ACCESS_ID: LTAI6IA8LN6W140J
+  STS_ACCESS_SECRET: 7g6u4b91RjWyOlxKR3fYDA3oTgTxCy

@@ -22,6 +22,7 @@ public class ResStatus {
         MsgInfo.put(10,"未检测出人脸信息");
         MsgInfo.put(11,"用户还未上传过图片");
         MsgInfo.put(20,"rabbitMQ发送消息失败");
+        MsgInfo.put(21,"获取OSS权限失败");
         MsgInfo.put(30,"还未上传对照参数");
     }
     public static String getInfo(Integer errorCode){
