@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -21,6 +23,15 @@ public class test {
     Logger logger = LoggerFactory.getLogger(test.class);
     @Autowired
     private PhotoDao photoDao;
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate;
+
+    @Test
+    public void stringTest(){
+        ValueOperations<String,Object> valueOperations = redisTemplate.opsForValue();
+        valueOperations.set("hello","redis");
+        logger.info("useRedisDao = " + valueOperations.get("hello"));
+    }
     @Test
     public void name() {
 //        Ossproperties ossproperties = new Ossproperties();

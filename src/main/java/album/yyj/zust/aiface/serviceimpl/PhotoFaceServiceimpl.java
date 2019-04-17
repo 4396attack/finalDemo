@@ -7,6 +7,7 @@ import album.yyj.zust.aiface.rabbitMQ.FirstSender;
 import album.yyj.zust.aiface.repository.PhotoDao;
 import album.yyj.zust.aiface.repository.PhotoFaceDao;
 import album.yyj.zust.aiface.service.PhotoFaceService;
+import album.yyj.zust.aiface.tools.RedisUtil;
 import album.yyj.zust.aiface.tools.StringTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -30,6 +32,9 @@ public class PhotoFaceServiceimpl implements PhotoFaceService {
 
     @Autowired
     private PhotoDao photoDao;
+
+    @Autowired
+    private RedisUtil redisUtil;
     /**
      * 根据人脸识别解析出的坐标信息，存入消息队列，并在数据库中做好记录
      * @param
@@ -57,6 +62,8 @@ public class PhotoFaceServiceimpl implements PhotoFaceService {
             try {
                 firstSender.send(uuid, message);
                 logger.info("成功发送消息到消息队列中，内容为: " + message );
+                redisUtil.set(RedisUtil.PREFIX_POS_FACE_KEY + photoId,RedisUtil.POS_STATS_UNDO,RedisUtil.KEY_EXPIRE_TIME);
+                logger.info("插入redis成功");
             }catch (Exception e){
                 logger.info("尝试发送消息失败，内容为 ： " + message + " ; 错误原因 ：" +e);
                 error = ErrorCodes.RABBIT_MSG_SEND_FAIL;
@@ -92,6 +99,8 @@ public class PhotoFaceServiceimpl implements PhotoFaceService {
                 try {
                     firstSender.send(uuid, message);
                     logger.info("成功发送消息到消息队列中，内容为: " + message );
+                    redisUtil.set(RedisUtil.PREFIX_POS_FACE_KEY + photoId,RedisUtil.POS_STATS_UNDO,RedisUtil.KEY_EXPIRE_TIME);
+                    logger.info("插入redis成功");
                 }catch (Exception e){
                     logger.info("尝试发送消息失败，内容为 ： " + message + " ; 错误原因 ：" +e);
                     error = ErrorCodes.RABBIT_MSG_SEND_FAIL;
@@ -119,5 +128,29 @@ public class PhotoFaceServiceimpl implements PhotoFaceService {
     @Override
     public PhotoFace updateInfo(PhotoFace photoFace) {
         return photoFaceDao.save(photoFace);
+    }
+
+    @Override
+    public Integer checkPosStatus(Integer photoId, Map<String, Object> data) {
+        Integer error = ErrorCodes.SUCCESS;
+        Object o = redisUtil.get(RedisUtil.PREFIX_POS_FACE_KEY + photoId);
+        if(o == null){
+            logger.info("redis无此记录:" + RedisUtil.PREFIX_POS_FACE_KEY + photoId);
+            error = ErrorCodes.NO_SUCH_REDIS_KEY;
+        }else {
+            Integer status = (Integer) o;
+            logger.info("人脸定位目前执行的状态为 ：" + status);
+            data.put("status",status);
+        }
+        return error;
+    }
+
+    @Override
+    public Integer getAllFacesPos(Integer photoId, Map<String, Object> data) {
+        Integer error = ErrorCodes.SUCCESS;
+        List<PhotoFace> faces = photoFaceDao.findFacesBelongPhoto(photoId);
+        data.put("num",faces.size());
+        data.put("faces",faces);
+        return error;
     }
 }

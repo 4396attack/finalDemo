@@ -32,6 +32,7 @@ public class PhotoServiceimpl implements PhotoService {
         OSSImageClient client = new OSSImageClient(ossproperties.getEndPoint(),ossproperties.getAccessKeyId(),ossproperties.getAccessKeySecret());
         if(client.exitObj(OSSPathTools.ORIGIN_BUCKET,OSSPathTools.prePhotoPath(photo.getUserId(),photo.getId()))){
             File temp = client.downloadFile(OSSPathTools.ORIGIN_BUCKET,OSSPathTools.prePhotoPath(photo.getUserId(),photo.getId()));
+            logger.info(temp.getAbsolutePath());
             String resStr = FaceTools.getFacePos(ossproperties.getAccessKeyId(),ossproperties.getAccessKeySecret(),temp);
             logger.info(resStr);
             JSONObject res = JSONObject.parseObject(resStr);

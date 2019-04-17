@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @MapperScan("album.yyj.zust.aiface.mapper")
-@SpringBootApplication
+@SpringBootApplication()
 public class AifaceApplication {
 
 	public static void main(String[] args) {

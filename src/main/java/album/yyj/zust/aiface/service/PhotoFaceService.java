@@ -4,6 +4,7 @@ import album.yyj.zust.aiface.pojo.Photo;
 import album.yyj.zust.aiface.pojo.PhotoFace;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PhotoFaceService {
     public Integer cutFace(Integer photoId);
@@ -13,4 +14,7 @@ public interface PhotoFaceService {
     public PhotoFace updateInfo(PhotoFace photoFace);
 
 
+    public Integer checkPosStatus(Integer photoId, Map<String, Object> data);
+
+    public Integer getAllFacesPos(Integer photoId, Map<String, Object> data);
 }

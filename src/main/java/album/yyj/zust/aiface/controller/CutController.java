@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -46,6 +48,34 @@ public class CutController {
 //        error = photoFaceService.cutFace(photoId);
         resObj.setCode(error);
         resObj.setMsg(ResStatus.getInfo(error));
+        return resObj;
+    }
+
+    /**
+     * 提供给app端的轮询接口，用来判断人脸定位是否完成
+     * @return
+     */
+    @RequestMapping("checkStatus")
+    public ResObj checkStatus(@RequestParam Integer photoId){
+        Integer error = ErrorCodes.SUCCESS;
+        Map<String,Object> data =  new HashMap<>();
+        ResObj resObj = new ResObj(ResStatus.FAIL,error,null);
+        error = photoFaceService.checkPosStatus(photoId,data);
+        resObj.setCode(error);
+        resObj.setMsg(ResStatus.getInfo(error));
+        resObj.setObj(data);
+        return resObj;
+    }
+
+    @RequestMapping("get/all/face/pos")
+    public ResObj getAllFacesPos(@RequestParam Integer photoId){
+        Integer error = ErrorCodes.SUCCESS;
+        Map<String,Object> data =  new HashMap<>();
+        ResObj resObj = new ResObj(ResStatus.FAIL,error,null);
+        error = photoFaceService.getAllFacesPos(photoId,data);
+        resObj.setCode(error);
+        resObj.setMsg(ResStatus.getInfo(error));
+        resObj.setObj(data);
         return resObj;
     }
 }

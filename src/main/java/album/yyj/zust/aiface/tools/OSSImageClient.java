@@ -47,10 +47,13 @@ public class OSSImageClient {
         return url.toString();
     }
     public File downloadFile(String bucket,String objName){
+        File dir = new File(System.getProperty("user.dir"),"temp");
+        if(!dir.exists()){
+            dir.mkdir();
+        }
         String uuid = UUID.randomUUID().toString() + ".jpg";
-        String path = System.getProperty("user.dir") + "\\facetest\\" + uuid;
-        ossClient.getObject(new GetObjectRequest(bucket,objName),new File(path));
-        return new File(path);
+        ossClient.getObject(new GetObjectRequest(bucket,objName),new File(dir,uuid));
+        return new File(dir,uuid);
     }
     public void downloadToPath(String bucket,String objName,String dest){
         ossClient.getObject(new GetObjectRequest(bucket,objName),new File(dest));

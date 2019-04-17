@@ -23,6 +23,7 @@ public class ResStatus {
         MsgInfo.put(11,"用户还未上传过图片");
         MsgInfo.put(20,"rabbitMQ发送消息失败");
         MsgInfo.put(21,"获取OSS权限失败");
+        MsgInfo.put(22,"redis中无此key");
         MsgInfo.put(30,"还未上传对照参数");
     }
     public static String getInfo(Integer errorCode){

@@ -2,6 +2,7 @@ package album.yyj.zust.aiface.daoTest;
 
 import album.yyj.zust.aiface.pojo.PhotoFace;
 import album.yyj.zust.aiface.repository.PhotoFaceDao;
+import album.yyj.zust.aiface.tools.RedisUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -23,6 +24,16 @@ public class PhotoFaceDaoTest {
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private PhotoFaceDao photoFaceDao;
+    @Autowired
+    private RedisUtil redisUtil;
+
+    @Test
+    public void redisTest(){
+        redisUtil.set("name","zxc",10*60);
+        logger.info("插入成功");
+        String name = redisUtil.get("name").toString();
+        logger.info("取值" + name);
+    }
 
     @Test
     public void findAllFaces(){

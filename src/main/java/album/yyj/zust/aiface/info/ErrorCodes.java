@@ -23,6 +23,7 @@ public class ErrorCodes {
 
     public final static Integer RABBIT_MSG_SEND_FAIL = 20;//发送消息失败
     public final static Integer GET_OSS_TOKEN_FAIL = 21;//获取OSStoken失败
+    public final static Integer NO_SUCH_REDIS_KEY = 22;//为检测到redis-key
 
     public final static Integer NO_SUCH_PIC_SOURCE = 30;//还未上传对照参数
 

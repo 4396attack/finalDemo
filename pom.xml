@@ -123,26 +123,35 @@
 			<artifactId>aliyun-java-sdk-core</artifactId>
 			<version>2.1.7</version>
 		</dependency>
+        <!-- 整合redis -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
 	</dependencies>
 	<packaging>
 		jar
 	</packaging>
 	<build>
 		<resources>
-			<!--      打包成jar发布时，才需要纳入外部包    start -->
 			<resource>
-				<directory>src/main/webapp/WEB-INF/lib</directory>
-				<targetPath>BOOT-INF/lib/</targetPath>
+				<directory>src/main/java</directory>
 				<includes>
-					<include>**/*.jar</include>
+					<include>**/*.yml</include>
+					<include>**/*.properties</include>
+					<include>**/*.xml</include>
 				</includes>
+				<filtering>false</filtering>
 			</resource>
-
 			<resource>
 				<directory>src/main/resources</directory>
-				<targetPath>BOOT-INF/classes/</targetPath>
+				<includes>
+					<include>**/*.yml</include>
+					<include>**/*.properties</include>
+					<include>**/*.xml</include>
+				</includes>
+				<filtering>false</filtering>
 			</resource>
-			<!--      打包成jar发布时，才需要纳入外部包      end -->
 		</resources>
 		<plugins>
 			<plugin>

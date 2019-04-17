@@ -7,6 +7,7 @@ import album.yyj.zust.aiface.service.PhotoFaceService;
 import album.yyj.zust.aiface.tools.ImageUtil;
 import album.yyj.zust.aiface.tools.OSSImageClient;
 import album.yyj.zust.aiface.tools.OSSPathTools;
+import album.yyj.zust.aiface.tools.RedisUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
@@ -30,6 +31,8 @@ public class FirstConsumer {
     private PhotoFaceService photoFaceService;
     @Autowired
     private Ossproperties ossproperties;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @RabbitListener(queues = {"first-queue","second-queue"},containerFactory = "rabbitListenerContainerFactory")
     public void handleMessage(String message){
@@ -37,19 +40,25 @@ public class FirstConsumer {
         logger.info("收到处理消息，内容为 ：" + message);
         JSONObject msg = JSON.parseObject(message);
         String photoId = msg.getString("photoId");
+        redisUtil.set(RedisUtil.PREFIX_POS_FACE_KEY + photoId,RedisUtil.POS_STATS_POSING,RedisUtil.KEY_EXPIRE_TIME);
+        logger.info("更新pos状态为处理中...");
         String userId = msg.getString("userId");
         String faceIds = msg.getString("faceIds");
         if(photoId == null || faceIds == null){
             logger.info("消息内容有误！请检查");
+            redisUtil.set(RedisUtil.PREFIX_POS_FACE_KEY + photoId,RedisUtil.POS_STATS_FAIL,RedisUtil.KEY_EXPIRE_TIME);
         }else {
             String[] ids = faceIds.split(",");
             if(ids.length == 0){
                 logger.info("人脸坐标信息有误！" + faceIds);
+                redisUtil.set(RedisUtil.PREFIX_POS_FACE_KEY + photoId,RedisUtil.POS_STATS_FAIL,RedisUtil.KEY_EXPIRE_TIME);
             }else {
                 List<PhotoFace> faces = photoFaceService.findAllFaceByPhotoIdAndFaceIds(photoId,ids);
                 for(PhotoFace pf : faces){//把每张人脸裁剪下来发送到OSS上指定地址
                     dowmloadAndCut(pf);
                 }
+                redisUtil.set(RedisUtil.PREFIX_POS_FACE_KEY + photoId,RedisUtil.POS_STATS_SUCCESS,RedisUtil.KEY_EXPIRE_TIME);
+                logger.info("更新pos状态为已完成");
                 logger.info("消息处理完毕！");
             }
         }
