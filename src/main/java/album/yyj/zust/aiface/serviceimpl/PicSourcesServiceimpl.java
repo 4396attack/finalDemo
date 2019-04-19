@@ -3,19 +3,19 @@ package album.yyj.zust.aiface.serviceimpl;
 import album.yyj.zust.aiface.info.ErrorCodes;
 import album.yyj.zust.aiface.pojo.*;
 import album.yyj.zust.aiface.properties.Ossproperties;
+import album.yyj.zust.aiface.rabbitMQ.SecondSender;
 import album.yyj.zust.aiface.repository.*;
 import album.yyj.zust.aiface.service.PicSourceService;
 import album.yyj.zust.aiface.tools.*;
-import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class PicSourcesServiceimpl implements PicSourceService {
@@ -38,6 +38,12 @@ public class PicSourcesServiceimpl implements PicSourceService {
 
     @Autowired
     private FindRecordsDao findRecordsDao;
+
+    @Autowired
+    private SecondSender secondSender;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     public Integer findMePre(Integer userId, Map<String, Object> data) {
@@ -89,12 +95,40 @@ public class PicSourcesServiceimpl implements PicSourceService {
         Integer error = ErrorCodes.SUCCESS;
         User user = userDao.findUndeletedUserById(userId);
         if(user != null){
-            List<Photo> photos = photoDao.findUndeletedsPhotosByUserId(userId);
+            List<Photo> photos = new ArrayList<>();
+            redisUtil.set(RedisUtil.PREFIX_FACE_MACHE_KEY + sourceId,RedisUtil.MACHE_STATS_UNDO,10*60);
+            List<Integer> photoIds = findRecordsDao.getHasSearchPhotoId(userId,sourceId);
+            if(photoIds.size() == 0){
+                logger.info("此模板图可能是新上传的，没有历史匹配");
+                photos = photoDao.findUndeletedsPhotosByUserId(userId);
+                //匹配该用户相册下所有的图片
+            }else {
+                logger.info("该模板有历史匹配记录，只需匹配新增的图片即可");
+                Integer maxId = photoIds.get(photoIds.size()-1);
+                photos = photoDao.findUnsearchPhotosByUserId(userId,photoIds,maxId);
+            }
             if(photos.size()>0){
+                StringBuilder sb = new StringBuilder();
                 for (Photo p : photos){
-                    faceCheck(p,userId,sourceId,data);
+                    sb.append(p.getId());
+                    sb.append(",");
                 }
+                String idInfo = sb.toString();
+                idInfo = idInfo.substring(0,idInfo.length()-1);//把最后的，去掉
+                String message = "{\"photoId\" : \""+ idInfo + "\" , \"userId\" : \""+userId+"\" , \"sourceId\" : \""+sourceId+"\"}";
+                String uuid = UUID.randomUUID().toString();
+                try {
+                    secondSender.send(uuid, message);
+                    logger.info("成功发送消息到消息队列中，内容为: " + message );
+//                    redisUtil.set(RedisUtil.PREFIX_POS_FACE_KEY + photoId,RedisUtil.POS_STATS_UNDO,RedisUtil.KEY_EXPIRE_TIME);
+                    logger.info("插入redis成功");
+                }catch (Exception e){
+                    logger.info("尝试发送消息失败，内容为 ： " + message + " ; 错误原因 ：" +e);
+                    error = ErrorCodes.RABBIT_MSG_SEND_FAIL;
+                }
+
             }else{
+                redisUtil.set(RedisUtil.PREFIX_FACE_MACHE_KEY + sourceId,RedisUtil.MACHE_STATS_FAIL,10*60);
                 error = ErrorCodes.NO_EVEN_UPLOAD_ANY_PHOTO;
             }
         }else {
@@ -103,61 +137,23 @@ public class PicSourcesServiceimpl implements PicSourceService {
         return error;
     }
 
-    /**
-     * 对图片中解析出来的人脸一次进行比对
-     * 置信度大于85认为是同一个人
-     */
-    private void faceCheck(Photo photo,Integer userId,Integer sourceId,Map<String, Object> data){
-        List<PhotoFace> faces = photoFaceDao.findFacesBelongPhoto(photo.getId());
-        OSSImageClient client = new OSSImageClient(ossproperties.getEndPoint(),ossproperties.getAccessKeyId(),ossproperties.getAccessKeySecret());
-        PicSource picSource = picSourceDao.findUndeletedRecordById(sourceId);
-        List<FindRecords> records = new ArrayList<>();
-        for(PhotoFace face : faces){
-//            logger.info("---------------" + face.getId());
-//            logger.info(OSSPathTools.getFaceDetailOSSPath(userId, photo.getId(), face.getId()));
-//            logger.info(OSSPathTools.getSourcePath(picSource.getUserId(), sourceId));
-            if(client.exitObj(OSSPathTools.DETAIL_BUCKET, OSSPathTools.getFaceDetailOSSPath(userId, photo.getId(), face.getId())) &&
-                    client.exitObj(OSSPathTools.ORIGIN_BUCKET, OSSPathTools.getSourcePath(picSource.getUserId(), sourceId))){
-                File faceImg = client.downloadFile(OSSPathTools.DETAIL_BUCKET, OSSPathTools.getFaceDetailOSSPath(userId, photo.getId(), face.getId()));
-                File sourceImg = client.downloadFile(OSSPathTools.ORIGIN_BUCKET, OSSPathTools.getSourcePath(picSource.getUserId(), sourceId));
-                Float confidence = isFaceSame(sourceImg, faceImg);
-                if(85 < confidence){
-//                    logger.info("****************************");
-                    FindRecords findRecords = new FindRecords(userId,photo.getId(),sourceId,confidence,face.getId());
-                    FindRecords save = findRecordsDao.save(findRecords);
-                    if(save.getId() == null){
-                        logger.info("更新数据库失败！");
-                    }else {
-                        records.add(save);
-                    }
-                    break;//一般来说 一张照片中只会存在一张自己的人脸，所以检测出来之后就不再往下继续分析
-                }
-            }
-
+    @Override
+    public Integer checkMacheStatus(Integer sourceId, Map<String, Object> data) {
+        Integer error = ErrorCodes.SUCCESS;
+        Integer status = (Integer)redisUtil.get(RedisUtil.PREFIX_FACE_MACHE_KEY + sourceId);
+        if(status == null){
+            error = ErrorCodes.NO_SUCH_REDIS_KEY;
+        }else {
+            data.put("obj",status);
         }
-        data.put("obj",records);
+        return error;
     }
 
-    /**
-     * 进行人脸校验
-     *
-     */
-    private Float isFaceSame(File sourceImg,File faceImg){
-        Float conf = new Float(0.0);
-        String resp = FaceTools.sendFaceCheckByContent(ossproperties.getAccessKeyId(), ossproperties.getAccessKeySecret(), sourceImg, faceImg);
-        logger.info(resp);
-        JSONObject info = JSONObject.parseObject(resp);
-        Integer errno = info.getInteger("errno");
-        String errMsg = "";
-        if(info.containsKey("err_msg")){
-            errMsg = info.getString("err_msg");
-        }
-        if(new Integer(0).equals(errno)){//请求成功
-            conf = info.getFloatValue("confidence");
-
-        }else {
-            logger.info("人脸对比请求失败，具体原因：" + errMsg );
-        }
-        return  conf;
+    @Override
+    public Integer getAllMachePhotos(Integer sourceId, Integer userId, Map<String, Object> data) {
+        Integer error = ErrorCodes.SUCCESS;
+        List<FindRecords> result = findRecordsDao.getHasSearchPhoto(userId, sourceId);
+        data.put("obj",result);
+        return error;
     }
 }

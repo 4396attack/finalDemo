@@ -61,6 +61,17 @@ public class FaceController {
         resObj.setCode(error);
         return resObj;
     }
+    @RequestMapping("get/all/photo")
+    public ResObj checkUpload(Integer userId){
+        Integer error = ErrorCodes.SUCCESS;
+        ResObj resObj = new ResObj(ResStatus.FAIL,error,null);
+        Map<String,Object> data = new HashMap<>();
+        error = photoService.findAllPhotos(userId,data);
+        resObj.setMsg(ResStatus.getInfo(error));
+        resObj.setObj(data);
+        resObj.setCode(error);
+        return resObj;
+    }
     @RequestMapping("test")
     public String test(){
         return ossproperties.toString();

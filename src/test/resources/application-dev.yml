@@ -10,9 +10,9 @@ spring:
   #配置项目的数据库链接信息
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql:///aiface?userUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://rm-bp1px87vnq1l2f2q7do.mysql.rds.aliyuncs.com:3306/aiface?serverTimezone=GMT%2B8
     username: root
-    password: 123456
+    password: Yyj+1223
   redis:
       database: 1
       host: localhost

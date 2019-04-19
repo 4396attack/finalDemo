@@ -8,4 +8,6 @@ public interface PhotoService {
     public Integer uploadPhoto(Photo photo,Map<String,Object> data);
 
     public Integer savePhoto(Photo photo, Map<String,Object> data);
+
+    public Integer findAllPhotos(Integer userId, Map<String, Object> data);
 }

@@ -1,6 +1,8 @@
 package album.yyj.zust.aiface.daoTest;
 
+import album.yyj.zust.aiface.pojo.Photo;
 import album.yyj.zust.aiface.pojo.PhotoFace;
+import album.yyj.zust.aiface.repository.PhotoDao;
 import album.yyj.zust.aiface.repository.PhotoFaceDao;
 import album.yyj.zust.aiface.tools.RedisUtil;
 import org.junit.Test;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +29,8 @@ public class PhotoFaceDaoTest {
     private PhotoFaceDao photoFaceDao;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private PhotoDao photoDao;
 
     @Test
     public void redisTest(){
@@ -44,5 +49,21 @@ public class PhotoFaceDaoTest {
             logger.info("---------------");
         }
     }
-
+    @Test
+    public void findUnPhoto(){
+        List<Integer>ids = new ArrayList<>();
+//        ids.add(45);
+//        ids.add(49);
+        Integer maxId = 0;
+        if(ids.size() > 0){
+            maxId = ids.get(ids.size() -1);//去最大的id
+        }
+        if(ids.size() == 0){
+            ids.add(0);
+        }
+        List<Photo> photo = photoDao.findUnsearchPhotosByUserId(3, ids,maxId);
+        for(Photo photo1 : photo){
+            logger.info(photo1.getId()+"");
+        }
+    }
 }

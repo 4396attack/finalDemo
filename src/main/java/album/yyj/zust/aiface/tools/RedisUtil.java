@@ -22,6 +22,13 @@ public class RedisUtil {
     public static final Integer POS_STATS_POSING = 2;
     public static final Integer POS_STATS_FAIL = -1;
     public static final Long KEY_EXPIRE_TIME = (long)10*60; //key的过期时间为10分钟
+
+    //图片检索相关的定义
+    public static final String PREFIX_FACE_MACHE_KEY = "face_mache_";
+    public static final Integer MACHE_STATS_UNDO = 0;
+    public static final Integer MACHE_STATS_SUCCESS = 1;
+    public static final Integer MACHE_STATS_MACHING = 2;
+    public static final Integer MACHE_STATS_FAIL = -1;
     @Autowired
     private RedisTemplate<String,Object> redisTemplate;
 

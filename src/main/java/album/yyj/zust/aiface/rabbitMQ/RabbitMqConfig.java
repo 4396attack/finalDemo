@@ -14,6 +14,8 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMqConfig {
     /** 消息交换机的名字*/
     public static final String EXCHANGE = "exchangeTest";
+
+    public static final String EXCHANGE_MACHE = "exchangeMache";
     /** 队列key1*/
     public static final String ROUTINGKEY1 = "queue_one_key1";
     /** 队列key2*/
@@ -42,7 +44,7 @@ public class RabbitMqConfig {
      */
     @Bean
     public Binding binding_two(){
-        return BindingBuilder.bind(queueConfig.secondQueue()).to(exchangeConfig.directExchange()).with(RabbitMqConfig.ROUTINGKEY2);
+        return BindingBuilder.bind(queueConfig.secondQueue()).to(exchangeConfig.directExchange2()).with(RabbitMqConfig.ROUTINGKEY2);
     }
     /**
      * queue listener 观察 监听模式

@@ -14,4 +14,7 @@ public interface PhotoDao extends JpaRepository<Photo,Integer> {
 
     @Query("select photo from Photo photo where photo.userId=:userId and photo.deleted = 0")
     public List<Photo> findUndeletedsPhotosByUserId(@Param("userId")Integer userId);
+
+    @Query("select photo from Photo photo where photo.userId=:userId and photo.deleted = 0 and photo.id not in (:ids) and photo.id>:maxId")
+    public List<Photo> findUnsearchPhotosByUserId(@Param("userId")Integer userId,@Param("ids")List<Integer> ids,@Param("maxId")Integer maxId);
 }

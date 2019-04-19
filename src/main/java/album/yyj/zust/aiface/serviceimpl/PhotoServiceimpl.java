@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -68,5 +70,12 @@ public class PhotoServiceimpl implements PhotoService {
         return error;
     }
 
-
+    @Override
+    public Integer findAllPhotos(Integer userId, Map<String, Object> data) {
+        Integer error =ErrorCodes.SUCCESS;
+        List<Photo> photos = new ArrayList<>();
+        photos = photoDao.findUndeletedsPhotosByUserId(userId);
+        data.put("obj",photos);
+        return error;
+    }
 }

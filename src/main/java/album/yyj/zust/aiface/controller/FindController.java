@@ -71,4 +71,32 @@ public class FindController {
         resObj.setObj(data);
         return resObj;
     }
+    /**
+     * 检测图片匹配是否完成
+     */
+    @RequestMapping("check/mache/status")
+    public ResObj checkMacheStatus(Integer sourceId){
+        Integer error = ErrorCodes.SUCCESS;
+        Map<String,Object> data = new HashMap<>();
+        ResObj resObj = new ResObj(ResStatus.FAIL,error,null);
+        error = picSourceService.checkMacheStatus(sourceId,data);
+        resObj.setCode(error);
+        resObj.setMsg(ResStatus.getInfo(error));
+        resObj.setObj(data);
+        return resObj;
+    }
+    /**
+     * 获取所有检测出的图片
+     */
+    @RequestMapping("get/all/mache/photos")
+    public ResObj getAllMachePhotos(Integer sourceId,Integer userId){
+        Integer error = ErrorCodes.SUCCESS;
+        Map<String,Object> data = new HashMap<>();
+        ResObj resObj = new ResObj(ResStatus.FAIL,error,null);
+        error = picSourceService.getAllMachePhotos(sourceId,userId,data);
+        resObj.setCode(error);
+        resObj.setMsg(ResStatus.getInfo(error));
+        resObj.setObj(data);
+        return resObj;
+    }
 }

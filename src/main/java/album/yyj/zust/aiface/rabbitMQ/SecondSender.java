@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class FirstSender {
+public class SecondSender {
     @Autowired
     private RabbitTemplate rabbitTemplate;
     public void send(String uuid,Object message){
         CorrelationData correlationId = new CorrelationData(uuid);
-        rabbitTemplate.convertAndSend(RabbitMqConfig.EXCHANGE,RabbitMqConfig.ROUTINGKEY1,message,correlationId);
+        rabbitTemplate.convertAndSend(RabbitMqConfig.EXCHANGE,RabbitMqConfig.ROUTINGKEY2,message,correlationId);
     }
 }

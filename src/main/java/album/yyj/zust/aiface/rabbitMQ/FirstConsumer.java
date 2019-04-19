@@ -34,7 +34,7 @@ public class FirstConsumer {
     @Autowired
     private RedisUtil redisUtil;
 
-    @RabbitListener(queues = {"first-queue","second-queue"},containerFactory = "rabbitListenerContainerFactory")
+    @RabbitListener(queues = {"first-queue"},containerFactory = "rabbitListenerContainerFactory")
     public void handleMessage(String message){
         // 处理消息
         logger.info("收到处理消息，内容为 ：" + message);

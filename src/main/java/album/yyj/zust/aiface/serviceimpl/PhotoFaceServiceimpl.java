@@ -75,6 +75,7 @@ public class PhotoFaceServiceimpl implements PhotoFaceService {
             logger.info("图片（id = "+photo.getId()+"）中人脸坐标信息为： "  + ract);
             List<String> ractInfo = StringTools.getRactInfo(ract);
             if(ractInfo.size() == 0){//未检测出人脸信息
+                redisUtil.set(RedisUtil.PREFIX_POS_FACE_KEY + photoId,RedisUtil.POS_STATS_FAIL,10*60);
                 error = ErrorCodes.NO_FACE_INFO;
             }else{
                 StringBuilder ids = new StringBuilder();
